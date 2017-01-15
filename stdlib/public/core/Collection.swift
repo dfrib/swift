@@ -102,7 +102,7 @@ public protocol _IndexableBase {
   ///
   /// - Complexity: O(1)
   subscript(bounds: Range<Index>) -> SubSequence { get }
-  
+
   /// Performs a range check in O(1), or a no-op when a range check is not
   /// implementable in O(1).
   ///
@@ -281,6 +281,9 @@ public protocol _Indexable : _IndexableBase {
   ///   - i: A valid index of the collection.
   ///   - n: The distance to offset `i`. `n` must not be negative unless the
   ///     collection conforms to the `BidirectionalCollection` protocol.
+  ///   - limit: A valid index of the collection to use as a limit. If `n > 0`,
+  ///     a limit that is less than `i` has no effect. Likewise, if `n < 0`, a
+  ///     limit that is greater than `i` has no effect.
   /// - Returns: `true` if `i` has been offset by exactly `n` steps without
   ///   going beyond `limit`; otherwise, `false`. When the return value is
   ///   `false`, the value of `i` is equal to `limit`.
@@ -348,7 +351,7 @@ public protocol _Indexable : _IndexableBase {
 ///             default: fatalError("Index out of bounds.")
 ///             }
 ///         }
-///         
+///
 ///         func index(after i: Int) -> Int {
 ///             precondition(i < endIndex, "Can't advance beyond endIndex")
 ///             return i + 1
@@ -721,7 +724,7 @@ public protocol Collection : _Indexable, Sequence {
   /// Returns a subsequence from the start of the collection through the
   /// specified position.
   ///
-  /// The resulting subsequence *includes* the element at the position `end`. 
+  /// The resulting subsequence *includes* the element at the position `end`.
   /// The following example searches for the index of the number `40` in an
   /// array of integers, and then prints the prefix of the array up to, and
   /// including, that index:
@@ -771,7 +774,7 @@ public protocol Collection : _Indexable, Sequence {
   ///   `RandomAccessCollection`; otherwise, O(*n*), where *n* is the length
   ///   of the collection.
   var count: IndexDistance { get }
-  
+
   // The following requirement enables dispatching for index(of:) when
   // the element type is Equatable.
   /// Returns `Optional(Optional(index))` if an element was found
@@ -784,7 +787,7 @@ public protocol Collection : _Indexable, Sequence {
   /// The first element of the collection.
   ///
   /// If the collection is empty, the value of this property is `nil`.
-  /// 
+  ///
   ///     let numbers = [10, 20, 30, 40, 50]
   ///     if let firstNumber = numbers.first {
   ///         print(firstNumber)
@@ -1037,6 +1040,9 @@ extension _Indexable {
   ///   - i: A valid index of the collection.
   ///   - n: The distance to offset `i`. `n` must not be negative unless the
   ///     collection conforms to the `BidirectionalCollection` protocol.
+  ///   - limit: A valid index of the collection to use as a limit. If `n > 0`,
+  ///     a limit that is less than `i` has no effect. Likewise, if `n < 0`, a
+  ///     limit that is greater than `i` has no effect.
   /// - Returns: `true` if `i` has been offset by exactly `n` steps without
   ///   going beyond `limit`; otherwise, `false`. When the return value is
   ///   `false`, the value of `i` is equal to `limit`.
@@ -1216,7 +1222,7 @@ extension Collection {
     var i = makeIterator()
     return i.next()
   }
-  
+
   // TODO: swift-3-indexing-model - uncomment and replace above ready (or should we still use the iterator one?)
   /// Returns the first element of `self`, or `nil` if `self` is empty.
   ///
@@ -1363,7 +1369,7 @@ extension Collection {
       offsetBy: numericCast(amount), limitedBy: endIndex) ?? endIndex
     return self[startIndex..<end]
   }
-  
+
   /// Returns a subsequence by skipping elements while `predicate` returns
   /// `true` and returning the remaining elements.
   ///
@@ -1379,7 +1385,7 @@ extension Collection {
     var start = startIndex
     while try start != endIndex && predicate(self[start]) {
       formIndex(after: &start)
-    } 
+    }
     return self[start..<endIndex]
   }
 
@@ -1407,7 +1413,7 @@ extension Collection {
       offsetBy: numericCast(maxLength), limitedBy: endIndex) ?? endIndex
     return self[startIndex..<end]
   }
-  
+
   /// Returns a subsequence containing the initial elements until `predicate`
   /// returns `false` and skipping the remaining elements.
   ///
@@ -1516,7 +1522,7 @@ extension Collection {
   /// Returns a subsequence from the start of the collection through the
   /// specified position.
   ///
-  /// The resulting subsequence *includes* the element at the position `end`. 
+  /// The resulting subsequence *includes* the element at the position `end`.
   /// The following example searches for the index of the number `40` in an
   /// array of integers, and then prints the prefix of the array up to, and
   /// including, that index:
@@ -1787,4 +1793,3 @@ extension Collection where Iterator.Element : Equatable {
 
 @available(*, unavailable, message: "PermutationGenerator has been removed in Swift 3")
 public struct PermutationGenerator<C : Collection, Indices : Sequence> {}
-
